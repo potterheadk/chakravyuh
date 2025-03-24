@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Healthcare Hub - Pharmacy Locator</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/locator.css') }}"
+        />
+    </head>
+    <body>
+        <div class="grid-pattern"></div>
+        <div class="vector-background" id="vector-bg"></div>
+
+        <div class="nav-container">
+            <nav>
+                <div class="logo">Healthcare Hub</div>
+                <ul class="nav-links">
+                    <li>
+                        <a href="/"><i class="fas fa-home"></i> Home</a>
+                    </li>
+                    <li>
+                        <a href="/services"
+                            ><i class="fas fa-stethoscope"></i> Services</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/analytic"
+                            ><i class="fas fa-chart-line"></i> Analytics</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/chatbot"
+                            ><i class="fas fa-robot"></i> Chatbot</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/locator"
+                            ><i class="fas fa-map-marker-alt"></i> Locator</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/Health"
+                            ><i class="fas fa-pills"></i> Medication</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/upload-pdfs"
+                            ><i class="fas fa-file-medical"></i> Reports</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/heart-disease"
+                            ><i class="fas fa-heartbeat"></i> Heart</a
+                        >
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <main>
+            <section class="content-section locator-container">
+                <h1 class="section-title">Locate Nearby Pharmacy</h1>
+                <p class="section-subtitle">
+                    Find the nearest pharmacy based on your current location
+                    with a single click.
+                </p>
+
+                <div class="feature-card locator-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <h3>How It Works</h3>
+                    <p>
+                        Our service uses your device's location to find
+                        pharmacies near you. We'll redirect you to Google Maps
+                        with the closest options.
+                    </p>
+
+                    <button id="locatePharmacyBtn" class="cta-button primary">
+                        <i class="fas fa-location-arrow"></i> Find Nearby
+                        Pharmacies
+                    </button>
+                </div>
+
+                <div class="tips-grid">
+                    <div class="tip-card">
+                        <div class="tip-icon"><i class="fas fa-clock"></i></div>
+                        <p>
+                            Check pharmacy operating hours before visiting,
+                            especially for late-night emergencies.
+                        </p>
+                    </div>
+                    <div class="tip-card">
+                        <div class="tip-icon">
+                            <i class="fas fa-prescription"></i>
+                        </div>
+                        <p>
+                            Carry your prescription details or medication names
+                            when visiting a new pharmacy.
+                        </p>
+                    </div>
+                    <div class="tip-card">
+                        <div class="tip-icon">
+                            <i class="fas fa-id-card"></i>
+                        </div>
+                        <p>
+                            Some medications require ID verification, so carry a
+                            valid identification document.
+                        </p>
+                    </div>
+                </div>
+
+                <div
+                    id="location-results"
+                    class="results-container"
+                    style="display: none"
+                >
+                    <!-- Location results will be populated here dynamically -->
+                </div>
+            </section>
+
+            <section class="content-section">
+                <h1 class="section-title">Need Emergency Assistance?</h1>
+                <p>
+                    If you're experiencing a medical emergency, please contact
+                    emergency services immediately.
+                </p>
+
+                <div class="emergency-contacts">
+                    <div class="emergency-contact-card">
+                        <i class="fas fa-ambulance"></i>
+                        <h3>Emergency Services</h3>
+                        <p class="emergency-number">911</p>
+                    </div>
+                    <div class="emergency-contact-card">
+                        <i class="fas fa-phone"></i>
+                        <h3>Poison Control</h3>
+                        <p class="emergency-number">1-800-222-1222</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-info">
+                    <p>
+                        📍 Find pharmacies in your area quickly and efficiently
+                    </p>
+                </div>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+                <p class="copyright">
+                    &copy; 2025 Healthcare Hub. All rights reserved.
+                </p>
+            </div>
+        </footer>
+
+        <script src="{{ url_for('static', filename='js/locator.js') }}"></script>
+    </body>
+</html>

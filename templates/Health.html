@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Medication Analyzer - Healthcare Hub</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/health.css') }}"
+        />
+    </head>
+    <body>
+        <div class="grid-pattern"></div>
+        <div class="vector-background" id="vector-bg"></div>
+
+        <div class="nav-container">
+            <nav>
+                <div class="logo">Healthcare Hub</div>
+                <ul class="nav-links">
+                    <li>
+                        <a href="/"><i class="fas fa-home"></i> Home</a>
+                    </li>
+                    <li>
+                        <a href="/services"
+                            ><i class="fas fa-stethoscope"></i> Services</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/analytic"
+                            ><i class="fas fa-chart-line"></i> Analytics</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/chatbot"
+                            ><i class="fas fa-robot"></i> Chatbot</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/locator"
+                            ><i class="fas fa-map-marker-alt"></i> Locator</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/Health"
+                            ><i class="fas fa-pills"></i> Medication</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/upload-pdfs"
+                            ><i class="fas fa-file-medical"></i> Reports</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/heart-disease"
+                            ><i class="fas fa-heartbeat"></i> Heart</a
+                        >
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <main>
+            <div class="analyzer-container">
+                <h1 class="section-title">Medication Analysis</h1>
+                <p class="section-subtitle">
+                    Analyze your medications for potential interactions and
+                    risks
+                </p>
+
+                <form id="healthForm">
+                    <div class="form-group">
+                        <label
+                            ><i class="fas fa-capsules"></i> Medications</label
+                        >
+                        <input
+                            type="text"
+                            id="medicationInput"
+                            placeholder="Type medication and press Enter"
+                        />
+                        <div id="medicationTags" class="tags"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label
+                            ><i class="fas fa-allergies"></i> Allergies</label
+                        >
+                        <input
+                            type="text"
+                            id="allergyInput"
+                            placeholder="Type allergy and press Enter"
+                        />
+                        <div id="allergyTags" class="tags"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label
+                            ><i class="fas fa-dna"></i> Genetic History</label
+                        >
+                        <textarea
+                            id="geneticHistory"
+                            placeholder="Enter relevant genetic history"
+                        ></textarea>
+                    </div>
+
+                    <button type="submit">
+                        <i class="fas fa-microscope"></i> Analyze Health Data
+                    </button>
+                </form>
+
+                <div id="loading" class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Analyzing your health data...</p>
+                </div>
+
+                <div id="result"></div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-info">
+                    <p>
+                        📍 Secured & Privacy-Focused | Powered by AI & Medical
+                        Data Science
+                    </p>
+                </div>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+                <p class="copyright">
+                    &copy; 2025 Healthcare Hub. All rights reserved.
+                </p>
+            </div>
+        </footer>
+
+        <!-- Monkey patch to add markdown support without modifying the original JS -->
+        <script>
+            // Store the original showResult function
+            document.addEventListener("DOMContentLoaded", function () {
+                if (
+                    typeof HealthForm !== "undefined" &&
+                    HealthForm.prototype.showResult
+                ) {
+                    // Store original function
+                    const originalShowResult = HealthForm.prototype.showResult;
+
+                    // Override with markdown-supporting version
+                    HealthForm.prototype.showResult = function (
+                        message,
+                        isError,
+                    ) {
+                        const result = document.getElementById("result");
+
+                        // Use markdown if not an error
+                        if (!isError && typeof marked !== "undefined") {
+                            result.innerHTML = marked.parse(message);
+                        } else {
+                            result.textContent = message;
+                        }
+
+                        result.style.display = "block";
+                        result.className = isError ? "error" : "success";
+                    };
+                }
+            });
+        </script>
+
+        <script src="{{ url_for('static', filename='js/health.js') }}"></script>
+    </body>
+</html>

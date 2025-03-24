@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Team Abhimanyu</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/style.css') }}"
+        />
+    </head>
+    <body>
+        <div class="floating-shapes" id="shapes"></div>
+
+        <nav>
+            <div class="container">
+                <div class="logo">Team Abhimanyu</div>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/services">Services</a></li>
+                    <li><a href="/analytic">Analytics</a></li>
+                    <li><a href="/chatbot">Chatbot</a></li>
+                    <li><a href="/locator">locator</a></li>
+                    <li><a href="/Health">Medication-Analyzer</a></li>
+                    <li><a href="/upload-pdfs">Medical Report Generator</a></li>
+                    <li><a href="/upload-pdfs">Heart-Disease</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <section class="hero" id="home">
+            <div class="container">
+                <h1>Your Health, Our Priority</h1>
+                <p style="font-size: 1.25rem; margin-bottom: 2rem">
+                    Advanced healthcare solutions for a better tomorrow
+                </p>
+                <a href="#contact" class="btn">Schedule Consultation</a>
+            </div>
+        </section>
+
+        <section class="services" id="services">
+            <div class="container">
+                <h2
+                    style="
+                        text-align: center;
+                        font-size: 2.5rem;
+                        margin-bottom: 1rem;
+                    "
+                >
+                    Our Services
+                </h2>
+                <div class="services-grid">
+                    <div class="service-card">
+                        <h3>General Checkup</h3>
+                        <p>
+                            Comprehensive health assessments using
+                            state-of-the-art technology.
+                        </p>
+                    </div>
+                    <div class="service-card">
+                        <h3>Emergency Care</h3>
+                        <p>
+                            24/7 emergency medical services with rapid response
+                            teams.
+                        </p>
+                    </div>
+                    <div class="service-card">
+                        <h3>Specialized Treatment</h3>
+                        <p>
+                            Expert care in various medical specialties and
+                            conditions.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <script src="{{ url_for('static', filename='js/service.js') }}"></script>
+    </body>
+</html>

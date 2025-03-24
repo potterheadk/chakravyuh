@@ -1,0 +1,892 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Medical Document Analyzer - Healthcare Hub</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css"
+        />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family:
+                    system-ui,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Segoe UI",
+                    Roboto,
+                    sans-serif;
+                background-color: #0a0f1c;
+                color: #f3f4f6;
+                min-height: 100vh;
+                position: relative;
+            }
+
+            .vector-background {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: -1;
+                overflow: hidden;
+            }
+
+            .vector-element {
+                position: absolute;
+                opacity: 0.03;
+                stroke: #fff;
+                fill: none;
+                stroke-width: 1;
+            }
+
+            .grid-pattern {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-image: linear-gradient(
+                        rgba(96, 165, 250, 0.05) 1px,
+                        transparent 1px
+                    ),
+                    linear-gradient(
+                        90deg,
+                        rgba(96, 165, 250, 0.05) 1px,
+                        transparent 1px
+                    );
+                background-size: 40px 40px;
+                z-index: -2;
+            }
+
+            .nav-container {
+                position: fixed;
+                top: 0;
+                width: 100%;
+                background: rgba(13, 18, 30, 0.95);
+                backdrop-filter: blur(10px);
+                z-index: 1000;
+                border-bottom: 1px solid rgba(96, 165, 250, 0.1);
+            }
+
+            nav {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 1rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+                font-weight: bold;
+                background: linear-gradient(135deg, #60a5fa, #7c3aed);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            .nav-links {
+                display: flex;
+                gap: 1.5rem;
+                list-style: none;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+
+            .nav-links a {
+                color: #f3f4f6;
+                text-decoration: none;
+                transition: color 0.3s;
+                font-size: 0.9rem;
+                display: flex;
+                align-items: center;
+                gap: 0.4rem;
+            }
+
+            .nav-links a:hover {
+                color: #60a5fa;
+            }
+
+            .nav-links a i {
+                font-size: 1rem;
+            }
+
+            .drop-area {
+                border: 2px dashed #3b82f6;
+                border-radius: 0.5rem;
+                padding: 2rem;
+                text-align: center;
+                transition: all 0.3s ease;
+            }
+            .drop-area.highlight {
+                border-color: #60a5fa;
+                background-color: rgba(59, 130, 246, 0.1);
+            }
+            .file-list {
+                max-height: 200px;
+                overflow-y: auto;
+            }
+            .summary-content {
+                max-height: 500px;
+                overflow-y: auto;
+                font-family:
+                    system-ui,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Segoe UI",
+                    Roboto,
+                    sans-serif;
+                line-height: 1.6;
+            }
+            .summary-content h1,
+            .summary-content h2,
+            .summary-content h3 {
+                margin-top: 1rem;
+                margin-bottom: 0.5rem;
+                font-weight: 600;
+                color: #e2e8f0;
+            }
+            .summary-content h1 {
+                font-size: 1.5rem;
+                border-bottom: 1px solid #4b5563;
+                padding-bottom: 0.5rem;
+            }
+            .summary-content h2 {
+                font-size: 1.25rem;
+            }
+            .summary-content h3 {
+                font-size: 1.1rem;
+            }
+            .summary-content p {
+                margin-bottom: 1rem;
+            }
+            .summary-content ul,
+            .summary-content ol {
+                margin-left: 1.5rem;
+                margin-bottom: 1rem;
+            }
+            .summary-content ul {
+                list-style-type: disc;
+            }
+            .summary-content ol {
+                list-style-type: decimal;
+            }
+            .summary-content li {
+                margin-bottom: 0.25rem;
+            }
+            .summary-content table {
+                border-collapse: collapse;
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+            .summary-content th,
+            .summary-content td {
+                border: 1px solid #4b5563;
+                padding: 0.5rem;
+                text-align: left;
+            }
+            .summary-content th {
+                background-color: #374151;
+            }
+            .summary-content blockquote {
+                border-left: 4px solid #3b82f6;
+                padding-left: 1rem;
+                margin-left: 0;
+                margin-right: 0;
+                font-style: italic;
+                color: #9ca3af;
+            }
+            .summary-content pre {
+                background-color: #1f2937;
+                border-radius: 0.25rem;
+                padding: 1rem;
+                overflow-x: auto;
+                margin-bottom: 1rem;
+            }
+            .summary-content code {
+                font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono",
+                    monospace;
+                background-color: #1f2937;
+                padding: 0.2rem 0.4rem;
+                border-radius: 0.25rem;
+                font-size: 0.875rem;
+            }
+            .summary-content hr {
+                border: 0;
+                border-top: 1px solid #4b5563;
+                margin: 1.5rem 0;
+            }
+            .notification {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 12px 24px;
+                background-color: #10b981;
+                color: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                z-index: 1000;
+                opacity: 0;
+                transform: translateY(-20px);
+                transition:
+                    opacity 0.3s,
+                    transform 0.3s;
+            }
+            .notification.show {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            main {
+                margin-top: 5rem;
+                padding: 4rem 1rem;
+                min-height: calc(100vh - 180px);
+            }
+
+            footer {
+                background: rgba(13, 18, 30, 0.95);
+                padding: 2rem 1rem;
+                text-align: center;
+                border-top: 1px solid rgba(96, 165, 250, 0.1);
+            }
+
+            .footer-content {
+                max-width: 1200px;
+                margin: 0 auto;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 1.5rem;
+            }
+
+            .footer-info {
+                font-size: 0.95rem;
+                color: #d1d5db;
+            }
+
+            .social-icons {
+                display: flex;
+                gap: 1.5rem;
+                margin: 1rem 0;
+            }
+
+            .social-icons a {
+                color: #60a5fa;
+                font-size: 1.5rem;
+                transition: color 0.3s ease;
+            }
+
+            .social-icons a:hover {
+                color: #7c3aed;
+            }
+
+            .copyright {
+                font-size: 0.9rem;
+                color: #9ca3af;
+            }
+
+            @media (max-width: 768px) {
+                .nav-links {
+                    display: none;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="grid-pattern"></div>
+        <div class="vector-background" id="vector-bg"></div>
+
+        <div id="notification" class="notification">
+            Email sent successfully!
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-container">
+            <nav>
+                <div class="logo">Healthcare Hub</div>
+                <ul class="nav-links">
+                    <li>
+                        <a href="/"><i class="fas fa-home"></i> Home</a>
+                    </li>
+                    <li>
+                        <a href="/services"
+                            ><i class="fas fa-stethoscope"></i> Services</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/analytic"
+                            ><i class="fas fa-chart-line"></i> Analytics</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/chatbot"
+                            ><i class="fas fa-robot"></i> Chatbot</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/locator"
+                            ><i class="fas fa-map-marker-alt"></i> Locator</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/Health"
+                            ><i class="fas fa-pills"></i> Medication</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/upload-pdfs"
+                            ><i class="fas fa-file-medical"></i> Reports</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/heart-disease"
+                            ><i class="fas fa-heartbeat"></i> Heart</a
+                        >
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <main class="flex items-center justify-center">
+            <div
+                class="w-full max-w-4xl bg-gray-800 p-8 rounded-lg shadow-md backdrop-blur-sm bg-opacity-80 border border-gray-700"
+            >
+                <h2
+                    class="text-2xl font-semibold text-center mb-6 text-blue-400"
+                >
+                    <i class="fas fa-file-medical-alt mr-2"></i>Medical Document
+                    Analyzer
+                </h2>
+                <p class="text-center text-gray-400 mb-6">
+                    Upload your medical PDFs for AI analysis and summary
+                    generation
+                </p>
+
+                <form
+                    id="upload-form"
+                    action="/upload-pdfs"
+                    method="post"
+                    enctype="multipart/form-data"
+                    class="space-y-4"
+                >
+                    <div id="drop-area" class="drop-area">
+                        <p class="mb-2">Drag & drop PDF files here</p>
+                        <p class="text-sm text-gray-400 mb-4">or</p>
+                        <input
+                            type="file"
+                            id="file-input"
+                            name="pdfs[]"
+                            accept="application/pdf"
+                            multiple
+                            class="hidden"
+                        />
+                        <button
+                            type="button"
+                            id="select-files"
+                            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105"
+                        >
+                            <i class="fas fa-file-upload mr-2"></i>Select Files
+                        </button>
+                    </div>
+
+                    <div id="file-list-container" class="mt-4 hidden">
+                        <h3 class="text-lg font-semibold mb-2">
+                            Selected Files:
+                        </h3>
+                        <ul
+                            id="file-list"
+                            class="file-list bg-gray-700 rounded-lg p-2 text-sm"
+                        ></ul>
+                    </div>
+
+                    <button
+                        type="submit"
+                        id="upload-button"
+                        class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-2 px-4 rounded-lg hidden transition duration-300 ease-in-out transform hover:scale-105"
+                    >
+                        <i class="fas fa-cloud-upload-alt mr-2"></i>Upload &
+                        Analyze
+                    </button>
+                </form>
+
+                <div id="progress-container" class="mt-4 hidden">
+                    <div class="w-full bg-gray-700 rounded-full h-2.5">
+                        <div
+                            id="progress-bar"
+                            class="bg-blue-600 h-2.5 rounded-full"
+                            style="width: 0%"
+                        ></div>
+                    </div>
+                    <p id="progress-text" class="text-sm text-center mt-2">
+                        0%
+                    </p>
+                </div>
+
+                <div id="result" class="mt-6 p-6 bg-gray-700 rounded-lg hidden">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold text-blue-400">
+                            <i class="fas fa-file-medical mr-2"></i>Document
+                            Analysis Summary
+                        </h3>
+                        <div class="flex space-x-2">
+                            <button
+                                id="download-btn"
+                                class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded transition duration-300"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-5 w-5 inline mr-1"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                                    />
+                                </svg>
+                                Download
+                            </button>
+                            <button
+                                id="send-to-doctor-btn"
+                                class="bg-purple-600 hover:bg-purple-700 text-white py-1 px-3 rounded transition duration-300"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-5 w-5 inline mr-1"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                                    />
+                                </svg>
+                                Send to Doctor
+                            </button>
+                            <button
+                                id="email-status"
+                                class="bg-green-600 text-white py-1 px-3 rounded hidden"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-5 w-5 inline mr-1"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M5 13l4 4L19 7"
+                                    />
+                                </svg>
+                                Email Sent
+                            </button>
+                        </div>
+                    </div>
+                    <div
+                        id="summary-text"
+                        class="summary-content bg-gray-800 rounded-lg p-4 text-gray-300"
+                    ></div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-info">
+                    <p>
+                        📍 Secured & Privacy-Focused | Powered by AI & Medical
+                        Data Science
+                    </p>
+                </div>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+                <p class="copyright">
+                    &copy; 2025 Healthcare Hub. All rights reserved.
+                </p>
+            </div>
+        </footer>
+
+        <script>
+            // Create vector background
+            const vectorBg = document.getElementById("vector-bg");
+            const shapes = [
+                "M0 0 L20 20",
+                "M0 0 A10 10 0 0 1 20 20",
+                "M0 0 H20 V20",
+            ];
+
+            for (let i = 0; i < 50; i++) {
+                const svg = document.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    "svg",
+                );
+                svg.setAttribute("class", "vector-element");
+                svg.setAttribute("width", "40");
+                svg.setAttribute("height", "40");
+                svg.setAttribute("viewBox", "0 0 40 40");
+
+                const path = document.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    "path",
+                );
+                path.setAttribute(
+                    "d",
+                    shapes[Math.floor(Math.random() * shapes.length)],
+                );
+                svg.appendChild(path);
+
+                svg.style.left = `${Math.random() * 100}%`;
+                svg.style.top = `${Math.random() * 100}%`;
+                svg.style.transform = `rotate(${Math.random() * 360}deg)`;
+
+                vectorBg.appendChild(svg);
+
+                gsap.to(svg, {
+                    rotation: "random(-180, 180)",
+                    x: "random(-30, 30)",
+                    y: "random(-30, 30)",
+                    duration: "random(15, 30)",
+                    repeat: -1,
+                    yoyo: true,
+                    ease: "none",
+                });
+            }
+
+            // Parallax effect
+            document.addEventListener("mousemove", (e) => {
+                const mouseX = e.clientX / window.innerWidth - 0.5;
+                const mouseY = e.clientY / window.innerHeight - 0.5;
+
+                gsap.to(".vector-element", {
+                    x: mouseX * 30,
+                    y: mouseY * 30,
+                    duration: 1,
+                });
+            });
+
+            // DOM Elements
+            const dropArea = document.getElementById("drop-area");
+            const fileInput = document.getElementById("file-input");
+            const selectButton = document.getElementById("select-files");
+            const uploadButton = document.getElementById("upload-button");
+            const fileListContainer = document.getElementById(
+                "file-list-container",
+            );
+            const fileList = document.getElementById("file-list");
+            const uploadForm = document.getElementById("upload-form");
+            const progressContainer =
+                document.getElementById("progress-container");
+            const progressBar = document.getElementById("progress-bar");
+            const progressText = document.getElementById("progress-text");
+            const resultDiv = document.getElementById("result");
+            const summaryText = document.getElementById("summary-text");
+            const downloadBtn = document.getElementById("download-btn");
+            const sendToDoctorBtn =
+                document.getElementById("send-to-doctor-btn");
+            const emailStatus = document.getElementById("email-status");
+            const notification = document.getElementById("notification");
+
+            // Current summary and PDF path
+            let currentSummary = "";
+
+            // Function to show notification
+            function showNotification(message) {
+                notification.textContent = message;
+                notification.classList.add("show");
+                setTimeout(() => {
+                    notification.classList.remove("show");
+                }, 3000);
+            }
+
+            // Event listeners for drag and drop
+            ["dragenter", "dragover", "dragleave", "drop"].forEach(
+                (eventName) => {
+                    dropArea.addEventListener(
+                        eventName,
+                        preventDefaults,
+                        false,
+                    );
+                },
+            );
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ["dragenter", "dragover"].forEach((eventName) => {
+                dropArea.addEventListener(eventName, highlight, false);
+            });
+
+            ["dragleave", "drop"].forEach((eventName) => {
+                dropArea.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight() {
+                dropArea.classList.add("highlight");
+            }
+
+            function unhighlight() {
+                dropArea.classList.remove("highlight");
+            }
+
+            // Handle dropped files
+            dropArea.addEventListener("drop", handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFiles(files);
+            }
+
+            // Handle selected files from button
+            selectButton.addEventListener("click", () => {
+                fileInput.click();
+            });
+
+            fileInput.addEventListener("change", () => {
+                handleFiles(fileInput.files);
+            });
+
+            function handleFiles(files) {
+                if (files.length === 0) return;
+
+                // Clear file list
+                fileList.innerHTML = "";
+
+                // Add files to list
+                Array.from(files).forEach((file) => {
+                    if (file.type === "application/pdf") {
+                        const li = document.createElement("li");
+                        li.className =
+                            "py-1 px-2 flex items-center justify-between";
+                        li.innerHTML = `
+                        <span class="truncate">${file.name}</span>
+                        <span class="text-xs text-gray-400">${formatFileSize(file.size)}</span>
+                    `;
+                        fileList.appendChild(li);
+                    }
+                });
+
+                // Show file list and upload button if files are selected
+                if (fileList.children.length > 0) {
+                    fileListContainer.classList.remove("hidden");
+                    uploadButton.classList.remove("hidden");
+                } else {
+                    fileListContainer.classList.add("hidden");
+                    uploadButton.classList.add("hidden");
+                }
+            }
+
+            function formatFileSize(bytes) {
+                if (bytes === 0) return "0 Bytes";
+                const k = 1024;
+                const sizes = ["Bytes", "KB", "MB", "GB"];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return (
+                    parseFloat((bytes / Math.pow(k, i)).toFixed(2)) +
+                    " " +
+                    sizes[i]
+                );
+            }
+
+            // Create and save a text file from the summary content
+            function createTextFile(content, filename) {
+                const blob = new Blob([content], { type: "text/plain" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                return blob;
+            }
+
+            // Download summary as text
+            downloadBtn.addEventListener("click", () => {
+                const summaryContent = summaryText.textContent;
+                createTextFile(
+                    summaryContent,
+                    "medical_summary_" + Date.now() + ".txt",
+                );
+            });
+
+            // Send to doctor button - now sends text file instead of PDF
+            sendToDoctorBtn.addEventListener("click", async () => {
+                if (!currentSummary) {
+                    showNotification("No summary available to send");
+                    return;
+                }
+
+                try {
+                    sendToDoctorBtn.disabled = true;
+                    sendToDoctorBtn.innerHTML = `
+                        <svg class="animate-spin h-5 w-5 inline mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Sending...
+                    `;
+
+                    // Create the text file in memory
+                    const textContent = summaryText.textContent;
+                    const fileName = "medical_summary_" + Date.now() + ".txt";
+
+                    // Send it to the server
+                    const formData = new FormData();
+                    const blob = new Blob([textContent], {
+                        type: "text/plain",
+                    });
+                    formData.append("text_content", blob, fileName);
+
+                    const response = await fetch("/send-to-doctor", {
+                        method: "POST",
+                        body: formData,
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        showNotification(
+                            "Document sent to doctor successfully!",
+                        );
+                        emailStatus.classList.remove("hidden");
+                    } else {
+                        showNotification("Error: " + result.error);
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                    showNotification("Failed to send document to doctor");
+                } finally {
+                    sendToDoctorBtn.disabled = false;
+                    sendToDoctorBtn.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        Send to Doctor
+                    `;
+                }
+            });
+
+            // Handle form submission
+            uploadForm.addEventListener("submit", async (e) => {
+                e.preventDefault();
+
+                if (fileInput.files.length === 0) {
+                    alert("Please select at least one PDF file.");
+                    return;
+                }
+
+                const formData = new FormData(uploadForm);
+
+                // Show progress
+                progressContainer.classList.remove("hidden");
+                uploadButton.disabled = true;
+                resultDiv.classList.add("hidden"); // Hide previous results
+                emailStatus.classList.add("hidden"); // Hide email status
+
+                try {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open("POST", "/upload-pdfs", true);
+
+                    xhr.upload.onprogress = (e) => {
+                        if (e.lengthComputable) {
+                            const percentComplete = Math.round(
+                                (e.loaded / e.total) * 100,
+                            );
+                            progressBar.style.width = percentComplete + "%";
+                            progressText.textContent = percentComplete + "%";
+                        }
+                    };
+
+                    xhr.onload = function () {
+                        if (xhr.status === 200) {
+                            const response = JSON.parse(xhr.responseText);
+
+                            // Store current summary
+                            currentSummary = response.summary || "";
+
+                            // Format the summary with marked.js to render markdown
+                            summaryText.innerHTML = marked.parse(
+                                response.summary || "No summary available.",
+                            );
+
+                            // Apply syntax highlighting to code blocks
+                            document
+                                .querySelectorAll("pre code")
+                                .forEach((block) => {
+                                    hljs.highlightBlock(block);
+                                });
+
+                            resultDiv.classList.remove("hidden");
+
+                            // Show notification if email was sent
+                            if (response.email_sent) {
+                                showNotification("Summary has been emailed!");
+                            }
+                        } else {
+                            let errorMsg = "Error processing request.";
+                            try {
+                                const response = JSON.parse(xhr.responseText);
+                                errorMsg = response.error || errorMsg;
+                            } catch (e) {}
+
+                            summaryText.textContent = errorMsg;
+                            resultDiv.classList.remove("hidden");
+                        }
+
+                        // Reset form
+                        uploadButton.disabled = false;
+                        progressContainer.classList.add("hidden");
+                    };
+
+                    xhr.onerror = function () {
+                        summaryText.textContent = "Network error occurred.";
+                        resultDiv.classList.remove("hidden");
+                        uploadButton.disabled = false;
+                        progressContainer.classList.add("hidden");
+                    };
+
+                    xhr.send(formData);
+                } catch (error) {
+                    console.error("Error:", error);
+                    summaryText.textContent = "Error processing request.";
+                    resultDiv.classList.remove("hidden");
+                    uploadButton.disabled = false;
+                    progressContainer.classList.add("hidden");
+                }
+            });
+        </script>
+    </body>
+</html>

@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Chakravyuh - AI Healthcare Companion</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/index.css') }}"
+        />
+    </head>
+    <body>
+        <div class="grid-pattern"></div>
+        <div class="vector-background" id="vector-bg"></div>
+
+        <div class="nav-container">
+            <nav>
+                <div class="logo">Team Abhimanyu</div>
+                <ul class="nav-links">
+                    <li>
+                        <a href="/"><i class="fas fa-home"></i> Home</a>
+                    </li>
+                    <li>
+                        <a href="/services"
+                            ><i class="fas fa-stethoscope"></i> Services</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/analytic"
+                            ><i class="fas fa-chart-line"></i> Analytics</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/chatbot"
+                            ><i class="fas fa-robot"></i> Chatbot</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/locator"
+                            ><i class="fas fa-map-marker-alt"></i> Locator</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/Health"
+                            ><i class="fas fa-pills"></i> Medication</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/upload-pdfs"
+                            ><i class="fas fa-file-medical"></i> Reports</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/heart-disease"
+                            ><i class="fas fa-heartbeat"></i> Heart</a
+                        >
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <main>
+            <!-- Hero Section -->
+            <section class="hero-section content-section">
+                <h1 class="hero-title">
+                    Welcome to AI-Powered Healthcare Companion
+                </h1>
+                <p class="hero-subtitle">
+                    🔍 Analyze Health Metrics | Predict Diseases | Get Medical
+                    Insights
+                </p>
+
+                <div class="cta-buttons">
+                    <button class="cta-button primary">
+                        <i class="fas fa-upload"></i> Upload Medical Report
+                    </button>
+                    <button class="cta-button secondary">
+                        <i class="fas fa-diagnoses"></i> Start AI Diagnosis
+                    </button>
+                    <button class="cta-button tertiary">
+                        <i class="fas fa-hospital"></i> Find Nearest Hospital
+                    </button>
+                </div>
+            </section>
+
+            <!-- Key Features Section -->
+            <section class="content-section">
+                <h1 class="section-title">Key Features</h1>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h3>Health Metrics Analysis</h3>
+                        <p>Get real-time insights from medical data</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3>Disease Prediction</h3>
+                        <p>AI-driven assessments for early diagnosis</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h3>Medical Chatbot</h3>
+                        <p>
+                            Ask AI-powered questions for expert-like responses
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h3>Heart Health Assessment</h3>
+                        <p>
+                            AI evaluates heart risks with personalized reports
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-pills"></i>
+                        </div>
+                        <h3>Medication Analysis</h3>
+                        <p>Verify prescriptions & avoid drug interactions</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-hospital"></i>
+                        </div>
+                        <h3>Hospital Locator</h3>
+                        <p>Find nearby medical facilities quickly</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- How It Works Section -->
+            <section class="content-section">
+                <h1 class="section-title">How It Works</h1>
+
+                <div class="steps-container">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <h3>Upload Medical Data</h3>
+                        <p>Share images, reports, and text-based records</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <h3>AI Analysis & Predictions</h3>
+                        <p>Get real-time insights & risk assessments</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <h3>Personalized Recommendations</h3>
+                        <p>Receive actionable medical guidance</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">4</div>
+                        <h3>Find Healthcare Services</h3>
+                        <p>Locate hospitals and clinics instantly</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Health Tips Section -->
+            <section class="content-section">
+                <h1 class="section-title">Health Tips</h1>
+                <p>Stay healthy with these simple tips:</p>
+                <div class="tips-grid">
+                    <div class="tip-card">
+                        <div class="tip-icon"><i class="fas fa-tint"></i></div>
+                        <p>Drink plenty of water throughout the day.</p>
+                    </div>
+                    <div class="tip-card">
+                        <div class="tip-icon">
+                            <i class="fas fa-running"></i>
+                        </div>
+                        <p>
+                            Get at least 30 minutes of physical activity every
+                            day.
+                        </p>
+                    </div>
+                    <div class="tip-card">
+                        <div class="tip-icon">
+                            <i class="fas fa-apple-alt"></i>
+                        </div>
+                        <p>
+                            Eat a balanced diet with a variety of fruits and
+                            vegetables.
+                        </p>
+                    </div>
+                    <div class="tip-card">
+                        <div class="tip-icon"><i class="fas fa-bed"></i></div>
+                        <p>
+                            Prioritize sleep and try to get 7-8 hours each
+                            night.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Consultation Booking Section -->
+            <section class="content-section form-container">
+                <h1 class="section-title">Book a Consultation</h1>
+                <form action="/book-consultation" method="POST">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input
+                            type="text"
+                            name="name"
+                            placeholder="Your Name"
+                            required
+                        />
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input
+                            type="email"
+                            name="email"
+                            placeholder="Your Email"
+                            required
+                        />
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-comment-medical"></i>
+                        <textarea
+                            name="message"
+                            placeholder="Tell us about your health concerns"
+                            required
+                        ></textarea>
+                    </div>
+                    <button type="submit">
+                        <i class="fas fa-calendar-check"></i> Book Now
+                    </button>
+                </form>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-info">
+                    <p>
+                        📍 Secured & Privacy-Focused | Powered by AI & Medical
+                        Data Science | 🏥 Trusted by Experts
+                    </p>
+                </div>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+                <p class="copyright">
+                    &copy; 2025 Chakravyuh Healthcare Hub. All rights reserved.
+                </p>
+            </div>
+        </footer>
+
+        <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    </body>
+</html>

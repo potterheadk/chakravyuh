@@ -1,0 +1,832 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Health Analytics Dashboard - Chakravyuh</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                background-color: #0a0f1c;
+                color: #f3f4f6;
+                font-family:
+                    system-ui,
+                    -apple-system,
+                    sans-serif;
+                min-height: 100vh;
+                overflow-x: hidden;
+                line-height: 1.6;
+            }
+
+            .vector-background {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: -1;
+                overflow: hidden;
+            }
+
+            .vector-element {
+                position: absolute;
+                opacity: 0.03;
+                stroke: #fff;
+                fill: none;
+                stroke-width: 1;
+            }
+
+            .grid-pattern {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-image: linear-gradient(
+                        rgba(96, 165, 250, 0.05) 1px,
+                        transparent 1px
+                    ),
+                    linear-gradient(
+                        90deg,
+                        rgba(96, 165, 250, 0.05) 1px,
+                        transparent 1px
+                    );
+                background-size: 40px 40px;
+                z-index: -2;
+            }
+
+            /* Navigation */
+            .nav-container {
+                position: fixed;
+                top: 0;
+                width: 100%;
+                background: rgba(13, 18, 30, 0.95);
+                backdrop-filter: blur(10px);
+                z-index: 1000;
+                border-bottom: 1px solid rgba(96, 165, 250, 0.1);
+            }
+
+            nav {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 1rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+                font-weight: bold;
+                background: linear-gradient(135deg, #60a5fa, #7c3aed);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            .nav-links {
+                display: flex;
+                gap: 1.5rem;
+                list-style: none;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+
+            .nav-links a {
+                color: #f3f4f6;
+                text-decoration: none;
+                transition: color 0.3s;
+                font-size: 0.9rem;
+                display: flex;
+                align-items: center;
+                gap: 0.4rem;
+            }
+
+            .nav-links a:hover {
+                color: #60a5fa;
+            }
+
+            .nav-links a i {
+                font-size: 1rem;
+            }
+
+            /* Main Content */
+            main {
+                margin-top: 5rem;
+                padding: 4rem 1rem;
+                position: relative;
+            }
+
+            .header {
+                max-width: 1200px;
+                margin: 2rem auto 3rem auto;
+                text-align: center;
+            }
+
+            .header h1 {
+                font-size: 2.5rem;
+                margin-bottom: 1rem;
+                background: linear-gradient(135deg, #60a5fa, #7c3aed);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+                line-height: 1.2;
+            }
+
+            .header p {
+                font-size: 1.2rem;
+                opacity: 0.9;
+                color: #d1d5db;
+            }
+
+            /* Cards Container */
+            .cards-container {
+                max-width: 1200px;
+                margin: 0 auto 2.5rem auto;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+                gap: 2rem;
+            }
+
+            .card {
+                background: rgba(17, 24, 39, 0.7);
+                border: 1px solid rgba(124, 58, 237, 0.1);
+                border-radius: 1rem;
+                padding: 2rem;
+                backdrop-filter: blur(10px);
+                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+                transition:
+                    transform 0.3s ease,
+                    box-shadow 0.3s ease;
+            }
+
+            .card:hover {
+                transform: translateY(-10px);
+                border-color: rgba(124, 58, 237, 0.4);
+                box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.3);
+            }
+
+            .card h2 {
+                font-size: 1.5rem;
+                margin-bottom: 1.5rem;
+                color: #60a5fa;
+                position: relative;
+                display: inline-block;
+            }
+
+            .card h2:after {
+                content: "";
+                position: absolute;
+                bottom: -8px;
+                left: 0;
+                width: 40px;
+                height: 3px;
+                background: linear-gradient(135deg, #60a5fa, #7c3aed);
+                border-radius: 3px;
+            }
+
+            /* Form Elements */
+            .form-group {
+                margin-bottom: 1.2rem;
+                position: relative;
+            }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 0.5rem;
+                color: #d1d5db;
+                font-size: 0.95rem;
+            }
+
+            .form-group input {
+                width: 100%;
+                padding: 0.9rem 1rem;
+                background: rgba(30, 41, 59, 0.5);
+                border: 1px solid rgba(124, 58, 237, 0.2);
+                border-radius: 0.5rem;
+                color: #f3f4f6;
+                font-size: 1rem;
+                transition: all 0.3s ease;
+            }
+
+            .form-group input:focus {
+                outline: none;
+                border-color: #60a5fa;
+                background: rgba(30, 41, 59, 0.7);
+                box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+            }
+
+            button {
+                width: 100%;
+                padding: 0.9rem 1.5rem;
+                background: linear-gradient(135deg, #60a5fa, #3b82f6);
+                border: none;
+                border-radius: 0.5rem;
+                color: white;
+                font-weight: 600;
+                font-size: 1rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                box-shadow:
+                    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
+
+            button:hover {
+                background: linear-gradient(135deg, #3b82f6, #2563eb);
+                transform: translateY(-2px);
+                box-shadow:
+                    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            }
+
+            button i {
+                font-size: 1.1rem;
+            }
+
+            .result {
+                margin-top: 1.2rem;
+                padding: 1.2rem;
+                border-radius: 0.5rem;
+                background: rgba(30, 41, 59, 0.5);
+                border: 1px solid rgba(124, 58, 237, 0.2);
+                display: none;
+                animation: fadeIn 0.3s ease;
+                font-weight: 500;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .loading {
+                display: none;
+                text-align: center;
+                margin-top: 1.2rem;
+                color: #60a5fa;
+                font-weight: 500;
+            }
+
+            .loading::after {
+                content: "...";
+                animation: loading 1.2s infinite;
+            }
+
+            @keyframes loading {
+                0% {
+                    content: ".";
+                }
+                33% {
+                    content: "..";
+                }
+                66% {
+                    content: "...";
+                }
+            }
+
+            /* Footer */
+            footer {
+                background: rgba(13, 18, 30, 0.95);
+                padding: 2rem 1rem;
+                text-align: center;
+                margin-top: 4rem;
+                border-top: 1px solid rgba(96, 165, 250, 0.1);
+            }
+
+            .footer-content {
+                max-width: 1200px;
+                margin: 0 auto;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 1.5rem;
+            }
+
+            .footer-info {
+                font-size: 0.95rem;
+                color: #d1d5db;
+            }
+
+            .social-icons {
+                display: flex;
+                gap: 1.5rem;
+                margin: 1rem 0;
+            }
+
+            .social-icons a {
+                color: #60a5fa;
+                font-size: 1.5rem;
+                transition: color 0.3s ease;
+            }
+
+            .social-icons a:hover {
+                color: #7c3aed;
+            }
+
+            .copyright {
+                font-size: 0.9rem;
+                color: #9ca3af;
+            }
+
+            /* Responsive Adjustments */
+            @media (max-width: 768px) {
+                .nav-links {
+                    display: none;
+                }
+
+                .header h1 {
+                    font-size: 2rem;
+                }
+
+                .header p {
+                    font-size: 1rem;
+                }
+
+                .cards-container {
+                    grid-template-columns: 1fr;
+                    padding: 0 1rem;
+                }
+
+                .card {
+                    padding: 1.5rem;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="grid-pattern"></div>
+        <div class="vector-background" id="vector-bg"></div>
+
+        <div class="nav-container">
+            <nav>
+                <div class="logo">Team Abhimanyu</div>
+                <ul class="nav-links">
+                    <li>
+                        <a href="/"><i class="fas fa-home"></i> Home</a>
+                    </li>
+                    <li>
+                        <a href="/services"
+                            ><i class="fas fa-stethoscope"></i> Services</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/analytic"
+                            ><i class="fas fa-chart-line"></i> Analytics</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/chatbot"
+                            ><i class="fas fa-robot"></i> Chatbot</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/locator"
+                            ><i class="fas fa-map-marker-alt"></i> Locator</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/Health"
+                            ><i class="fas fa-pills"></i> Medication</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/upload-pdfs"
+                            ><i class="fas fa-file-medical"></i> Reports</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/heart-disease"
+                            ><i class="fas fa-heartbeat"></i> Heart</a
+                        >
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <main>
+            <div class="header">
+                <h1>Health Analytics Dashboard</h1>
+                <p>
+                    Monitor your health metrics and get AI-powered risk
+                    assessments
+                </p>
+            </div>
+
+            <div class="cards-container">
+                <!-- BMI Calculator Card -->
+                <div class="card">
+                    <h2>BMI Calculator</h2>
+                    <form id="bmiForm">
+                        <div class="form-group">
+                            <label for="weight">Weight (kg)</label>
+                            <input
+                                type="number"
+                                id="weight"
+                                required
+                                step="0.1"
+                                placeholder="Enter your weight"
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="height">Height (m)</label>
+                            <input
+                                type="number"
+                                id="height"
+                                required
+                                step="0.01"
+                                placeholder="Enter your height"
+                            />
+                        </div>
+                        <button type="submit">
+                            <i class="fas fa-calculator"></i> Calculate BMI
+                        </button>
+                        <div id="bmiResult" class="result"></div>
+                    </form>
+                </div>
+
+                <!-- Diabetes Risk Assessment Card -->
+                <div class="card">
+                    <h2>Diabetes Risk Assessment</h2>
+                    <form id="diabetesForm">
+                        <div class="form-group">
+                            <label for="pregnancies">Pregnancies</label>
+                            <input
+                                type="number"
+                                id="pregnancies"
+                                required
+                                min="0"
+                                placeholder="Number of pregnancies"
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="glucose">Glucose Level (mg/dL)</label>
+                            <input
+                                type="number"
+                                id="glucose"
+                                required
+                                placeholder="Glucose level"
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="bloodPressure"
+                                >Blood Pressure (mm Hg)</label
+                            >
+                            <input
+                                type="number"
+                                id="bloodPressure"
+                                required
+                                placeholder="Blood pressure"
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="skinThickness"
+                                >Skin Thickness (mm)</label
+                            >
+                            <input
+                                type="number"
+                                id="skinThickness"
+                                required
+                                placeholder="Skin thickness"
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="insulin">Insulin Level (μU/ml)</label>
+                            <input
+                                type="number"
+                                id="insulin"
+                                required
+                                placeholder="Insulin level"
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="bmi">BMI</label>
+                            <input
+                                type="number"
+                                id="bmi"
+                                required
+                                step="0.1"
+                                placeholder="Body Mass Index"
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="diabetesPedigree"
+                                >Diabetes Pedigree Function</label
+                            >
+                            <input
+                                type="number"
+                                id="diabetesPedigree"
+                                required
+                                step="0.001"
+                                placeholder="Diabetes hereditary factor"
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="age">Age</label>
+                            <input
+                                type="number"
+                                id="age"
+                                required
+                                placeholder="Your age"
+                            />
+                        </div>
+                        <button type="submit">
+                            <i class="fas fa-heartbeat"></i> Assess Risk
+                        </button>
+                        <div id="diabetesResult" class="result"></div>
+                        <div id="diabetesLoading" class="loading">
+                            Analyzing your data
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Heart Disease Risk Assessment Card -->
+                <div class="card">
+                    <h2>Heart Disease Risk Assessment</h2>
+                    <form id="heartDiseaseForm">
+                        <div class="form-group">
+                            <label for="hdAge">Age</label>
+                            <input
+                                type="number"
+                                id="hdAge"
+                                required
+                                placeholder="Your age"
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="cholesterol">Cholesterol (mg/dL)</label>
+                            <input
+                                type="number"
+                                id="cholesterol"
+                                required
+                                placeholder="Total cholesterol"
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="hdBloodPressure"
+                                >Blood Pressure (mm Hg)</label
+                            >
+                            <input
+                                type="number"
+                                id="hdBloodPressure"
+                                required
+                                placeholder="Systolic blood pressure"
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="exercise">Exercise (hours/week)</label>
+                            <input
+                                type="number"
+                                id="exercise"
+                                required
+                                step="0.5"
+                                placeholder="Hours of exercise per week"
+                            />
+                        </div>
+                        <button type="submit">
+                            <i class="fas fa-heart"></i> Assess Heart Risk
+                        </button>
+                        <div id="heartDiseaseResult" class="result"></div>
+                        <div id="heartDiseaseLoading" class="loading">
+                            Analyzing your data
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-info">
+                    <p>
+                        📍 Secured & Privacy-Focused | Powered by AI & Medical
+                        Data Science | 🏥 Trusted by Experts
+                    </p>
+                </div>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+                <p class="copyright">
+                    &copy; 2025 Chakravyuh Healthcare Hub. All rights reserved.
+                </p>
+            </div>
+        </footer>
+
+        <script>
+            // Create vector background elements
+            window.addEventListener("DOMContentLoaded", () => {
+                const vectorBg = document.getElementById("vector-bg");
+
+                for (let i = 0; i < 15; i++) {
+                    const svg = document.createElementNS(
+                        "http://www.w3.org/2000/svg",
+                        "svg",
+                    );
+                    svg.setAttribute("width", "300");
+                    svg.setAttribute("height", "300");
+                    svg.classList.add("vector-element");
+
+                    // Random position
+                    svg.style.left = `${Math.random() * 100}%`;
+                    svg.style.top = `${Math.random() * 100}%`;
+
+                    // Create circle or path
+                    if (Math.random() > 0.5) {
+                        const circle = document.createElementNS(
+                            "http://www.w3.org/2000/svg",
+                            "circle",
+                        );
+                        circle.setAttribute("cx", "150");
+                        circle.setAttribute("cy", "150");
+                        circle.setAttribute("r", `${50 + Math.random() * 100}`);
+                        svg.appendChild(circle);
+                    } else {
+                        const path = document.createElementNS(
+                            "http://www.w3.org/2000/svg",
+                            "path",
+                        );
+                        path.setAttribute(
+                            "d",
+                            `M150,50 Q${50 + Math.random() * 200},${50 + Math.random() * 200} 150,250`,
+                        );
+                        svg.appendChild(path);
+                    }
+
+                    vectorBg.appendChild(svg);
+                }
+            });
+
+            // BMI Calculator
+            document
+                .getElementById("bmiForm")
+                .addEventListener("submit", async (e) => {
+                    e.preventDefault();
+                    const weight = parseFloat(
+                        document.getElementById("weight").value,
+                    );
+                    const height = parseFloat(
+                        document.getElementById("height").value,
+                    );
+
+                    try {
+                        const response = await fetch("/calculate_bmi", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ weight, height }),
+                        });
+
+                        const data = await response.json();
+                        const resultDiv = document.getElementById("bmiResult");
+                        resultDiv.style.display = "block";
+                        resultDiv.innerHTML = `<strong>Your BMI:</strong> ${data.bmi}`;
+                    } catch (error) {
+                        console.error("Error:", error);
+                        showError(
+                            "bmiResult",
+                            "Failed to calculate BMI. Please try again.",
+                        );
+                    }
+                });
+
+            // Diabetes Risk Assessment
+            document
+                .getElementById("diabetesForm")
+                .addEventListener("submit", async (e) => {
+                    e.preventDefault();
+                    const loading = document.getElementById("diabetesLoading");
+                    const resultDiv = document.getElementById("diabetesResult");
+
+                    loading.style.display = "block";
+                    resultDiv.style.display = "none";
+
+                    const data = {
+                        pregnancies: parseInt(
+                            document.getElementById("pregnancies").value,
+                        ),
+                        glucose: parseInt(
+                            document.getElementById("glucose").value,
+                        ),
+                        blood_pressure: parseInt(
+                            document.getElementById("bloodPressure").value,
+                        ),
+                        skin_thickness: parseInt(
+                            document.getElementById("skinThickness").value,
+                        ),
+                        insulin: parseInt(
+                            document.getElementById("insulin").value,
+                        ),
+                        bmi: parseFloat(document.getElementById("bmi").value),
+                        diabetes_pedigree: parseFloat(
+                            document.getElementById("diabetesPedigree").value,
+                        ),
+                        age: parseInt(document.getElementById("age").value),
+                    };
+
+                    try {
+                        const response = await fetch("/predict_diabetes", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(data),
+                        });
+
+                        const result = await response.json();
+                        loading.style.display = "none";
+                        resultDiv.style.display = "block";
+                        resultDiv.innerHTML = `<strong>Analysis Result:</strong> ${result.prediction}`;
+                    } catch (error) {
+                        console.error("Error:", error);
+                        loading.style.display = "none";
+                        showError(
+                            "diabetesResult",
+                            "Failed to analyze diabetes risk. Please try again.",
+                        );
+                    }
+                });
+
+            // Heart Disease Risk Assessment
+            document
+                .getElementById("heartDiseaseForm")
+                .addEventListener("submit", async (e) => {
+                    e.preventDefault();
+                    const loading = document.getElementById(
+                        "heartDiseaseLoading",
+                    );
+                    const resultDiv =
+                        document.getElementById("heartDiseaseResult");
+
+                    loading.style.display = "block";
+                    resultDiv.style.display = "none";
+
+                    const data = {
+                        age: parseInt(document.getElementById("hdAge").value),
+                        cholesterol: parseInt(
+                            document.getElementById("cholesterol").value,
+                        ),
+                        blood_pressure: parseInt(
+                            document.getElementById("hdBloodPressure").value,
+                        ),
+                        exercise: parseFloat(
+                            document.getElementById("exercise").value,
+                        ),
+                    };
+
+                    try {
+                        const response = await fetch("/predict_heart_disease", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(data),
+                        });
+
+                        const result = await response.json();
+                        loading.style.display = "none";
+                        resultDiv.style.display = "block";
+                        resultDiv.innerHTML = `<strong>Analysis Result:</strong> ${result.prediction}`;
+                    } catch (error) {
+                        console.error("Error:", error);
+                        loading.style.display = "none";
+                        showError(
+                            "heartDiseaseResult",
+                            "Failed to analyze heart disease risk. Please try again.",
+                        );
+                    }
+                });
+
+            function showError(elementId, message) {
+                const element = document.getElementById(elementId);
+                element.style.display = "block";
+                element.style.backgroundColor = "rgba(239, 68, 68, 0.1)";
+                element.style.borderColor = "rgba(239, 68, 68, 0.3)";
+                element.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+            }
+        </script>
+    </body>
+</html>
